@@ -310,11 +310,36 @@
             return $this->selectData($this->tableName, "*", $condition, null, null, "user_id", "DESC");
         }
 
-        public function verifyUser(mixed $form_data)
+        public function verifyUser(mixed $form_data): array
         {
-            return [
-                'status' => 200,
-                'message' => 'User verified successfully.'
+            $id = $form_data['id'];
+            $group = $form_data['group'];
+
+            $updateDate = [
+                'blood_group' => $group,
+                'status' => 1
             ];
+            $condition = [
+                'user_id' => $id
+            ];
+            try {
+                $result = $this->updateData($this->tableName, $updateDate, $condition);
+                if (!$result){
+                    return [
+                        'status' => 200,
+                        'message' => 'Error verifying user.'
+                    ];
+                }
+                return [
+                    'status' => 200,
+                    'message' => 'User verified successfully.'
+                ];
+            }catch (Exception $e){
+                return [
+                    'status' => 200,
+                    'message' => $e->getMessage()
+                ];
+            }
+
         }
     }

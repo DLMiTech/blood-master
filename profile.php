@@ -20,8 +20,9 @@ $myData = $me->getMe($_SESSION['user_id']);
         <?php
     }elseif($myData[0]['status'] == 1 && $myData[0]['role'] == 0){
         ?>
-        <div class="">
-            <h1>Status</h1>
+        <div class="card p-3 shadow mb-3 text-center">
+            <h4>Blood Group</h4>
+            <h1><?= $myData[0]['blood_group'];?></h1>
         </div>
         <?php
     }
