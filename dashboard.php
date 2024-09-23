@@ -6,6 +6,13 @@ include "includes/header.php";
 include "includes/nav.php";
 $user = new Authentication();
 $users = $user->getAllUser();
+$book = new Booking();
+$booking = $book->allBooking();
+$totalBlood = $book->totalBlood();
+$totalO = $book->totalGroup("O");
+$totalA = $book->totalGroup("A");
+$totalB = $book->totalGroup("B");
+$totalAB = $book->totalGroup("AB");
 ?>
 
 <div class="container py-5">
@@ -17,7 +24,8 @@ $users = $user->getAllUser();
             <nav>
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                     <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-rooms" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Users</button>
-                    <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-FandF" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Features & Facilities</button>
+                    <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-FandF" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Booking</button>
+                    <button class="nav-link" id="nav-dash-tab" data-bs-toggle="tab" data-bs-target="#nav-Dash" type="button" role="tab" aria-controls="nav-dash" aria-selected="false">Dashboard</button>
                 </div>
             </nav>
 
@@ -78,7 +86,99 @@ $users = $user->getAllUser();
                 </div>
 
                 <div class="tab-pane fade" id="nav-FandF" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0">
-                    <h1>Two</h1>
+                    <div class="card p-3 shadow">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>On</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php
+                            if (count($booking) > 0){
+                                foreach ($booking as $item){
+                                    ?>
+                                    <tr>
+                                        <td><?= $item['id'];?></td>
+                                        <td><?= $item['booked_at'];?></td>
+                                        <td>
+                                            <?php
+                                            if ($item['status'] == 0){
+                                                ?>
+                                                <button class="btn btn-sm btn-warning">Pending</button>
+                                                <?php
+                                            }elseif ($item['status'] == 1){
+                                                ?>
+                                                <button class="btn btn-sm btn-primary">Approved</button>
+                                                <?php
+                                            }else{
+                                                ?>
+                                                <button class="btn btn-sm btn-secondary">Completed</button>
+                                                <?php
+                                            }
+                                            ?>
+                                        </td>
+                                        <td><?= $item['date'];?></td>
+                                        <td><?= $item['time'];?></td>
+                                        <td><button type="button" id="changeStatusBtn"
+                                                    data-booking-id="<?= $item['id'];?>"
+                                                    class="btn btn-sm btn-danger">CHANGE</button></td>
+                                    </tr>
+                                    <?php
+                                }
+                            }
+                            ?>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+                <div class="tab-pane fade" id="nav-Dash" role="tabpanel" aria-labelledby="nav-dash-tab" tabindex="0">
+                    <div class="card p-3 shadow">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="text-center p-5 border shadow">
+                                    <h2>Total Blood</h2>
+                                    <h1><?= $totalBlood?></h1>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="text-center p-5 border shadow">
+                                    <h2>Total O Blood</h2>
+                                    <h1><?= $totalO?></h1>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="text-center p-5 border shadow">
+                                    <h2>Total A Blood</h2>
+                                    <h1><?= $totalA?></h1>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="text-center p-5 border shadow">
+                                    <h2>Total B Blood</h2>
+                                    <h1><?= $totalB?></h1>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="text-center p-5 border shadow">
+                                    <h2>Total AB Blood</h2>
+                                    <h1><?= $totalAB?></h1>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -115,6 +215,40 @@ $users = $user->getAllUser();
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                     <button id="verifyBtn" type="submit" class="btn btn-primary">SUBMIT</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="changeStatusModel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Change Donation Booking Status</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="" method="post" id="changeBookingForm">
+                <div class="modal-body">
+
+                    <input type="hidden" name="id" id="viewBookingId" class="form-control mb-2" readonly>
+
+                    <label for="group">Select Status</label>
+                    <select name="group" id="group" class="form-select" required>
+                        <option value="">Select status</option>
+                        <option value="0">Pending</option>
+                        <option value="1">Approved</option>
+                        <option value="2">Completed</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button id="changeBookingBtn" type="submit" class="btn btn-primary">SUBMIT</button>
                 </div>
             </form>
 
@@ -181,6 +315,67 @@ include "includes/footer.php";
                                 button.prop("disabled", false).html('SUBMIT');
                                 $('#verifyForm')[0].reset();
                                 $('#verifyUserModel').modal('hide');
+                                window.location.href = 'dashboard.php';
+                            }
+                        });
+
+                    }
+                }
+            });
+        })
+
+
+
+        $(document).on('click', '#changeStatusBtn', function () {
+            // alert("Hello");
+            let button = $(this);
+            let booking_id = button.data('booking-id');
+
+
+            $('#viewBookingId').val(booking_id);
+
+
+            $('#changeStatusModel').modal('show');
+        })
+
+
+
+        $(document).on('submit', '#changeBookingForm', function (e) {
+            e.preventDefault();
+
+            let button = $("#changeBookingBtn");
+            button.prop("disabled", true).html('<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span> <span class="fw-light">Loading...</span>');
+
+            let formData = new FormData(this);
+            formData.append("changeBookingBtn", true);
+
+            $.ajax({
+                type: "POST",
+                url: "private/api/booking.php",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    //alert(response);
+                    let res = jQuery.parseJSON(response);
+
+                    if (res.status === 400) {
+                        button.prop("disabled", false).html('SUBMIT');
+                        Swal.fire({
+                            icon: "error",
+                            text: res.message,
+                        });
+                    } else if (res.status === 200) {
+
+                        Swal.fire({
+                            icon: "success",
+                            text: res.message,
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+
+                                button.prop("disabled", false).html('SUBMIT');
+                                $('#changeBookingForm')[0].reset();
+                                $('#changeStatusModel').modal('hide');
                                 window.location.href = 'dashboard.php';
                             }
                         });
