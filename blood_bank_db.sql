@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Sep 22, 2024 at 09:34 PM
+-- Generation Time: Sep 24, 2024 at 06:05 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,33 @@ SET time_zone = "+00:00";
 --
 -- Database: `blood_bank_db`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `booking`
+--
+
+CREATE TABLE `booking` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `phone` varchar(15) NOT NULL,
+  `blood_group` varchar(50) NOT NULL,
+  `date` date NOT NULL,
+  `time` varchar(50) NOT NULL,
+  `status` int(11) NOT NULL DEFAULT 0,
+  `booked_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `booking`
+--
+
+INSERT INTO `booking` (`id`, `user_id`, `name`, `email`, `phone`, `blood_group`, `date`, `time`, `status`, `booked_at`) VALUES
+(1, 2, 'User one', 'user1@gmail.com', '1236987450', 'AB', '2024-09-25', '10AM to 12PM', 0, '2024-09-23 06:05:56'),
+(2, 2, 'User one', 'user1@gmail.com', '1236987450', 'AB', '2024-09-26', '10AM to 12PM', 2, '2024-09-23 06:11:30');
 
 -- --------------------------------------------------------
 
@@ -71,6 +98,12 @@ INSERT INTO `users_tb` (`user_id`, `name`, `username`, `email`, `phone`, `passwo
 --
 
 --
+-- Indexes for table `booking`
+--
+ALTER TABLE `booking`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `message`
 --
 ALTER TABLE `message`
@@ -85,6 +118,12 @@ ALTER TABLE `users_tb`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `booking`
+--
+ALTER TABLE `booking`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `message`
